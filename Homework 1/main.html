@@ -14,31 +14,44 @@
             margin-top: 2%;
             text-align: center;
         }
+
+        .background_svg {
+            width: 100%;
+            height: 100%;
+            fill: gray;
+        }
     </style>
 </head>
 <body>
 <div class="middle_margin_10">
-
+    <svg id="waiting" style="width: 800px; height: 400px">
+        <rect class="background_svg" style="stroke: black; stroke-width: 3px"></rect>
+        <text style="transform: translate(320px, 190px); font-size: 28px">Please wait ...</text>
+    </svg>
 </div>
 
 <div class="middle_margin_2">
     <button onclick="choose_problem(1)">problem1</button>
     <button onclick="choose_problem(2)">problem2</button>
-    <button onclick="choose_problem(3)">problem3</button>
 </div>
 
 
 <script>
     function choose_problem(idx) {
-        for (let i = 1; i < 4; i++) {
-            if (i !== idx)
-                d3.select(`#p${i}`).style("visibility", "hidden");
-            else
-                d3.select(`#p${i}`).style("visibility", "visible");
+        d3.select("#waiting").style("display", "none");
+        for (let i = 1; i < 3; i++) {
+            if (i !== idx) {
+                d3.select(`#p${i}`).style("display", "none");
+            }
+            else {
+                d3.select(`#p${i}`).style("display", "initial");
+            }
         }
     }
 
 </script>
+
+<script src="p2.js"></script>
 
 <script>
     const dataBaseLine = [
@@ -64,7 +77,8 @@
         .append("svg")
         .attr("width", width)
         .attr("height", height)
-        .attr("id", "p1");
+        .attr("id", "p1")
+        .attr("display", "none");
 
     svg
         .append("rect")
