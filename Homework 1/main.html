@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <title>Problem1</title>
+    <title>Homework 1</title>
     <script src="https://d3js.org/d3.v5.js"></script>
     <style>
         .middle_margin_5 {
@@ -24,9 +24,9 @@
 </head>
 <body>
 <div class="middle_margin_5">
-    <svg id="waiting" style="width: 600px; height: 600px">
+    <svg id="waiting" style="width: 700px; height: 600px">
         <rect class="background_svg" style="stroke: black; stroke-width: 3px"></rect>
-        <text style="transform: translate(210px, 275px); font-size: 28px">Press button ⬇</text>
+        <text style="transform: translate(260px, 275px); font-size: 28px">Press button ⬇</text>
     </svg>
 </div>
 
@@ -66,7 +66,7 @@
         {month: "Dec", baseline: 12.55}
     ]
 
-    const width = 600;
+    const width = 700;
     const height = 600;
 
     const svg_1 = d3
@@ -201,7 +201,7 @@
         .text("Year-Month - Anomaly");
 
     // X axis
-    const xScale_2 = d3.scaleBand().range([0, gW]);
+    const xScale_2 = d3.scaleBand().range([0, gW - 100]);
     xScale_2.domain(labels);
     g_2.append("g")
         .attr("transform", `translate(0, ${gH})`)
@@ -235,10 +235,46 @@
 
     let min = Infinity;
     let max = -Infinity;
+
+    let promise = function () {
+        // create an array of steps based on the color scale
+        const tick_num = 10;
+        let data = d3.range(tick_num).map(d => ({
+            color: d3.interpolateRdBu(d / tick_num),
+            value: (d / (tick_num - 1) * (max - min) + min)
+        }))
+        const bar_width = 400;
+        const bar_height = 8;
+        const xScale = d3.scaleLinear()
+            .range([0, bar_width])
+            .domain([min, max]);
+        const xTicks = data.map(d => d.value);
+        const xAxis = d3.axisRight(xScale)
+            .tickSize(bar_height * 2)
+            .tickValues(xTicks);
+        const g = svg_2.append("g")
+            .attr("transform", `translate(${gW}, ${margin.top})`);
+        let linearGradient = g.append("linearGradient")
+            .attr("id", "myGradient")
+            .selectAll("stop")
+            .data(data)
+            .enter().append("stop")
+            .attr("offset", d => ((d.value - min) / (max - min) * 100) + "%")
+            .attr("stop-color", d => d.color);
+        g.append("rect")
+            .attr("width", bar_width)
+            .attr("height", bar_height)
+            .attr("transform", `rotate(270), translate(-${bar_width}, 0)`)
+            .style("fill", "url(#myGradient)");
+        g.append("g")
+            .call(xAxis)
+            .select(".domain").remove();
+    };
+
     d3.csv("./temperature.csv", function (data) {
         min = Math.min(min, Number(data["Anomaly"]) + getBaseLine(data["Month"]));
         max = Math.max(max, Number(data["Anomaly"]) + getBaseLine(data["Month"]));
-    });
+    }).then(promise);
 
     d3.csv("./temperature.csv", function (data) {
         svg_2.append("rect")
@@ -252,7 +288,7 @@
                 d3.select(this).style("stroke", "black").style("stroke-width", "2px");
                 d3.select("#Floating")
                     .text(parseInt(this.id))
-                    .attr("transform", `translate(${margin.left / 2}, ${this.getBoundingClientRect().y - margin.top * 3 / 4})`);
+                    .attr("transform", `translate(${margin.left / 2}, ${this.getBoundingClientRect().y - margin.top / 4})`);
             })
             .on("mouseleave", function () {
                 d3.select(this).style("stroke", "white").style("stroke-width", "0px");
@@ -260,6 +296,7 @@
                     .text("");
             });
     });
+
 </script>
 
 </body>
