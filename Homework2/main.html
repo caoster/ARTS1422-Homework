@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Homework 2</title>
+    <script src="https://d3js.org/d3.v5.js"></script>
+    <style>
+
+    </style>
+</head>
+<body>
+
+<script>
+
+    // set the dimensions and margins of the graph
+    const margin = {top: 10, right: 30, bottom: 30, left: 60},
+        width = 460 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+    // TODO: Highlight, Name
+
+    processData = function (text, name) {
+        let data = d3.csvParse("first,second\n" + text);
+
+        // append the svg object to the body of the page
+        const svg = d3.select("body")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+        // Add X axis
+        const x = d3.scaleLinear()
+            .domain(d3.extent(data.map(d => Number(d["first"]))))
+            .range([0, width]);
+        svg.append("g")
+            .attr("transform", `translate(0, ${height})`)
+            .call(d3.axisBottom(x));
+
+        // Add Y axis
+        const y = d3.scaleLinear()
+            .domain(d3.extent(data.map(d => Number(d["second"]))))
+            .range([height, 0]);
+        svg.append("g")
+            .call(d3.axisLeft(y));
+
+        let count = 0;
+
+        // Add dots
+        svg.append('g')
+            .selectAll("dot")
+            .data(data)
+            .join("circle")
+            .attr("cx", function (d) {
+                return x(d["first"]);
+            })
+            .attr("cy", function (d) {
+                return y(d["second"]);
+            })
+            .attr("r", 2)
+            .style("fill", "#69b3a2")
+            .attr("id", function (d) {
+                ++count;
+                return count;
+            })
+
+    }
+
+    // Read the data
+    d3.text("boston_MDS.csv", "MDS").then(processData).then(function next() {
+        d3.text("boston_PCA.csv", "PCA").then(processData);
+    }).then(function next() {
+        d3.text("boston_TSNE.csv", "TSNE").then(processData);
+    });
+
+
+</script>
+
+<!--<script>-->
+<!--    const dataBaseLine = [-->
+<!--        {month: "Jan", baseline: 12.29},-->
+<!--        {month: "Feb", baseline: 12.50},-->
+<!--        {month: "Mar", baseline: 13.11},-->
+<!--        {month: "Apr", baseline: 14.03},-->
+<!--        {month: "May", baseline: 15.01},-->
+<!--        {month: "Jun", baseline: 15.72},-->
+<!--        {month: "Jul", baseline: 15.99},-->
+<!--        {month: "Aug", baseline: 15.82},-->
+<!--        {month: "Sep", baseline: 15.23},-->
+<!--        {month: "Oct", baseline: 14.30},-->
+<!--        {month: "Nov", baseline: 13.28},-->
+<!--        {month: "Dec", baseline: 12.55}-->
+<!--    ]-->
+
+<!--    const width = 700;-->
+<!--    const height = 600;-->
+
+<!--    const svg_1 = d3-->
+<!--        .select("div")-->
+<!--        .append("svg")-->
+<!--        .attr("width", width)-->
+<!--        .attr("height", height)-->
+<!--        .attr("id", "p1")-->
+<!--        .attr("display", "none");-->
+
+<!--    svg_1-->
+<!--        .append("rect")-->
+<!--        .attr("width", width)-->
+<!--        .attr("height", height)-->
+<!--        .attr("fill", "white")-->
+<!--        .attr("stroke", "black")-->
+<!--        .attr("stroke-width", "3")-->
+
+<!--    const margin = {top: 80, right: 30, bottom: 50, left: 50};-->
+<!--    const g_1 = svg_1.append("g").attr("transform", `translate(${margin.left}, ${margin.top})`);-->
+
+<!--    const gW = width - margin.left - margin.right;-->
+<!--    const gH = height - margin.top - margin.bottom;-->
+
+<!--    const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];-->
+
+<!--    const svg_2 = d3-->
+<!--        .select("div")-->
+<!--        .append("svg")-->
+<!--        .attr("width", width)-->
+<!--        .attr("height", height)-->
+<!--        .attr("id", "p2")-->
+<!--        .attr("display", "none");-->
+
+<!--    svg_2-->
+<!--        .append("rect")-->
+<!--        .attr("width", width)-->
+<!--        .attr("height", height)-->
+<!--        .attr("fill", "white")-->
+<!--        .attr("stroke", "black")-->
+<!--        .attr("stroke-width", "3")-->
+
+<!--    const g_2 = svg_2.append("g").attr("transform", `translate(${margin.left}, ${margin.top})`);-->
+
+<!--    // Title-->
+<!--    svg_2.append("text")-->
+<!--        .attr("transform", `translate(${margin.left + gW / 2}, ${margin.top / 2})`)-->
+<!--        .style("font-family", "sans-serif")-->
+<!--        .style("font-size", "28px")-->
+<!--        .style("fill", "brown")-->
+<!--        .style("text-anchor", "middle")-->
+<!--        .style("font-weight", "bold")-->
+<!--        .text("Year-Month - Anomaly");-->
+
+<!--    // X axis-->
+<!--    const xScale_2 = d3.scaleBand().range([0, gW - 100]);-->
+<!--    xScale_2.domain(labels);-->
+<!--    g_2.append("g")-->
+<!--        .attr("transform", `translate(0, ${gH})`)-->
+<!--        .call(d3.axisBottom(xScale_2).ticks())-->
+<!--        .attr("stroke", "darkred");-->
+
+<!--    // Year label-->
+<!--    svg_2.append("text")-->
+<!--        .attr("transform", `translate(${margin.left + gW / 2}, ${height - margin.bottom / 4})`)-->
+<!--        .style("font-family", "sans-serif")-->
+<!--        .style("font-size", "14px")-->
+<!--        .style("fill", "brown")-->
+<!--        .style("text-anchor", "middle")-->
+<!--        .style("font-weight", "bold")-->
+<!--        .text("Month")-->
+
+<!--    svg_2.append("text")-->
+<!--        .style("font-family", "sans-serif")-->
+<!--        .style("font-size", "14px")-->
+<!--        .style("fill", "brown")-->
+<!--        .style("text-anchor", "middle")-->
+<!--        .style("font-weight", "bold")-->
+<!--        .attr("id", "Floating")-->
+
+<!--    const single_height = 2.9;-->
+<!--    const single_width = 43.5;-->
+
+<!--    function getBaseLine(month) {-->
+<!--        return dataBaseLine[month - 1].baseline-->
+<!--    }-->
+
+<!--    let min = Infinity;-->
+<!--    let max = -Infinity;-->
+
+<!--    let promise = function () {-->
+<!--        // create an array of steps based on the color scale-->
+<!--        const tick_num = 10;-->
+<!--        let data = d3.range(tick_num).map(d => ({-->
+<!--            color: d3.interpolateRdBu(d / tick_num),-->
+<!--            value: (d / (tick_num - 1) * (max - min) + min)-->
+<!--        }))-->
+<!--        const bar_width = 400;-->
+<!--        const bar_height = 8;-->
+<!--        const xScale = d3.scaleLinear()-->
+<!--            .range([0, bar_width])-->
+<!--            .domain([min, max]);-->
+<!--        const xTicks = data.map(d => d.value);-->
+<!--        const xAxis = d3.axisRight(xScale)-->
+<!--            .tickSize(bar_height * 2)-->
+<!--            .tickValues(xTicks);-->
+<!--        const g = svg_2.append("g")-->
+<!--            .attr("transform", `translate(${gW}, ${margin.top})`);-->
+<!--        let linearGradient = g.append("linearGradient")-->
+<!--            .attr("id", "myGradient")-->
+<!--            .selectAll("stop")-->
+<!--            .data(data)-->
+<!--            .enter().append("stop")-->
+<!--            .attr("offset", d => ((d.value - min) / (max - min) * 100) + "%")-->
+<!--            .attr("stop-color", d => d.color);-->
+<!--        g.append("rect")-->
+<!--            .attr("width", bar_width)-->
+<!--            .attr("height", bar_height)-->
+<!--            .attr("transform", `rotate(270), translate(-${bar_width}, 0)`)-->
+<!--            .style("fill", "url(#myGradient)");-->
+<!--        g.append("g")-->
+<!--            .call(xAxis)-->
+<!--            .select(".domain").remove();-->
+<!--    };-->
+
+<!--    d3.csv("./temperature.csv", function (data) {-->
+<!--        min = Math.min(min, Number(data["Anomaly"]) + getBaseLine(data["Month"]));-->
+<!--        max = Math.max(max, Number(data["Anomaly"]) + getBaseLine(data["Month"]));-->
+<!--    }).then(promise);-->
+
+<!--    d3.csv("./temperature.csv", function (data) {-->
+<!--        svg_2.append("rect")-->
+<!--            .attr("id", `${data["Year"]}-${data["Month"]}`)-->
+<!--            .style("x", `${margin.left + (Number(data["Month"]) - 1) * single_width}`)-->
+<!--            .style("y", `${height - margin.bottom - (2023 - (Number(data["Year"]))) * single_height}`)-->
+<!--            .style("width", `${single_width}`)-->
+<!--            .style("height", `${single_height}`)-->
+<!--            .style("fill", `${d3.interpolateRdBu((Number(data["Anomaly"]) + getBaseLine(data["Month"]) - max) / (min - max))}`)-->
+<!--            .on("mouseover", function () {-->
+<!--                d3.select(this).style("stroke", "black").style("stroke-width", "2px");-->
+<!--                d3.select("#Floating")-->
+<!--                    .text(parseInt(this.id))-->
+<!--                    .attr("transform", `translate(${margin.left / 2}, ${this.getBoundingClientRect().y - margin.top / 4})`);-->
+<!--            })-->
+<!--            .on("mouseleave", function () {-->
+<!--                d3.select(this).style("stroke", "white").style("stroke-width", "0px");-->
+<!--                d3.select("#Floating")-->
+<!--                    .text("");-->
+<!--            });-->
+<!--    });-->
+
+<!--</script>-->
+
+</body>
+</html>
