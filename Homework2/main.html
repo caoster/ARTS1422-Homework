@@ -20,7 +20,7 @@
         width = 460 - margin.left - margin.right,
         height = 440 - margin.top - margin.bottom;
 
-    // TODO: Highlight
+    let names = ["MDS", "PCA", "TSNE"]
 
     processData = function (name, text) {
         let data = d3.csvParse("first,second\n" + text);
@@ -74,7 +74,17 @@
             .style("fill", "#69b3a2")
             .attr("id", function (d) {
                 ++count;
-                return count;
+                return name + String(count);
+            })
+            .on("mouseover", function () {
+                for (const name of names) {
+                    d3.selectAll("#" + name + this.id.replace(/[^\W\d]/g, "")).style("fill", "#b36969").attr("r", 8);
+                }
+            })
+            .on("mouseleave", function () {
+                for (const name of names) {
+                    d3.select("#" + name + this.id.replace(/[^\W\d]/g, "")).style("fill", "#69b3a2").attr("r", 2);
+                }
             })
 
     }
