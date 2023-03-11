@@ -9,26 +9,38 @@
     </style>
 </head>
 <body>
+<div class="MDS" style="float: left; width: 33%; height: 800px"></div>
+<div class="PCA" style="float: left; width: 33%; height: 800px"></div>
+<div class="TSNE" style="float: left; width: 33%; height: 800px"></div>
 
 <script>
 
     // set the dimensions and margins of the graph
-    const margin = {top: 10, right: 30, bottom: 30, left: 60},
+    const margin = {top: 40, right: 30, bottom: 30, left: 60},
         width = 460 - margin.left - margin.right,
-        height = 400 - margin.top - margin.bottom;
+        height = 440 - margin.top - margin.bottom;
 
-    // TODO: Highlight, Name
+    // TODO: Highlight
 
-    processData = function (text, name) {
+    processData = function (name, text) {
         let data = d3.csvParse("first,second\n" + text);
 
         // append the svg object to the body of the page
-        const svg = d3.select("body")
+        const svg = d3.select("." + name)
             .append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
             .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+        svg.append("text")
+            .attr("transform", `translate(${width / 2}, 0)`)
+            .style("font-family", "sans-serif")
+            .style("font-size", "18px")
+            .style("fill", "brown")
+            .style("text-anchor", "middle")
+            .style("font-weight", "bold")
+            .text(name)
 
         // Add X axis
         const x = d3.scaleLinear()
@@ -68,11 +80,9 @@
     }
 
     // Read the data
-    d3.text("boston_MDS.csv", "MDS").then(processData).then(function next() {
-        d3.text("boston_PCA.csv", "PCA").then(processData);
-    }).then(function next() {
-        d3.text("boston_TSNE.csv", "TSNE").then(processData);
-    });
+    d3.text("boston_MDS.csv").then(processData.bind(null, "MDS"));
+    d3.text("boston_PCA.csv").then(processData.bind(null, "PCA"));
+    d3.text("boston_TSNE.csv").then(processData.bind(null, "TSNE"));
 
 
 </script>
