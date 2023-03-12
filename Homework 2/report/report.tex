@@ -16,23 +16,30 @@
 
 
     \section{Task 1}
-    Dataset: $http://lib.stat.cmu.edu/datasets/boston$
-
-    The original dataset includes descriptive information, it has already been preprocessed to work.
-    \begin{center}
-    \end{center}
-    Here we have name of months as X axis, value of baselines as Y axis.
-
+    Dataset: \underline{http://lib.stat.cmu.edu/datasets/boston}
+    
+    The original dataset is designed to be human-readable instead of python-friendly, so manual formatting is required.
+    
+    Then we work with the well-formatted data. ($boston.csv$)
+    
+    We can easily import these algorithms from scipy and process them for rendering.
     \newpage
 
 
     \section{Task 2}
-    Press the problem 2 button below to show the second figure:
-    \begin{center}
-    \end{center}
-    Visualization of data in the .csv file is achieved by normalizing and harnessing $d3.interpolateRdBu$.
+    
+    Open $main.html$ (with $boston\_MDS.csv$, $boston\_PCA.csv$ and $boston\_TSNE.csv$ in the same directory) in browser.
+    
+    \begin{figure}[h]
+    	\centering
+    	\includegraphics[width=14cm]{task2}
+    	\label{fig:task2}
+    \end{figure}
+    
+    As shown above, when mouse hover certain data points, all corresponding points in three graphs is highlighted.
+    
+    \hspace{3cm}
 
-    We can easily find out that, as time goes by, temperature gradually rises.
-
+	\textbf{Evaluation}: A very vital dimension in the dataset is \textbf{AGE}, which means \textbf{proportion of owner-occupied units built prior to 1940}. Only PCA has distinguished them very well, keeping them monotone along with a line in the plot.
 
 \end{document}
